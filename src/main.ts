@@ -27,7 +27,10 @@ import {
 } from "element-ui";
 import CollapseTransition from "element-ui/lib/transitions/collapse-transition";
 import mixin from "./mixins";
-
+//引入自定义的类
+import dataItem from '@/model/dataItem'
+import category from '@/model/cateEnum'
+import DataAction from './store/dataAction';
 Vue.mixin(mixin);
 
 // 按需引用 element 组件
@@ -69,3 +72,9 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount("#app");
+
+
+//new 出一个class的实例
+let newItem = new dataItem(1, category.Study, '学习', '我喜欢小爽')
+new DataAction().addData(newItem)
+console.log('newItem', newItem)

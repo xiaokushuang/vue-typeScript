@@ -138,192 +138,197 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import RegisterAndLogin from "@/components/registerAndLogin.vue";
-import { isMobileOrPc, getQueryStringByName } from "@/utils/utils";
-import { Route } from "vue-router";
-import { UserInfo, NavListItem } from "@/types/index";
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import RegisterAndLogin from '@/components/registerAndLogin.vue'
+import { isMobileOrPc, getQueryStringByName } from '@/utils/utils'
+import { Route } from 'vue-router'
+import { UserInfo, NavListItem } from '@/types/index'
 
 @Component({
   components: {
-    RegisterAndLogin
-  }
+    RegisterAndLogin,
+  },
 })
 export default class Nav extends Vue {
-  private visible: boolean = false;
-  private handleFlag: string = "";
-  private title: string = "首页";
+  private visible: boolean = false
+  private handleFlag: string = ''
+  private title: string = '首页'
   private list: Array<NavListItem> = [
     {
-      index: "1",
-      path: "/",
-      name: "首页"
+      index: '1',
+      path: '/',
+      name: '首页',
     },
     {
-      index: "2",
-      path: "/articles",
-      name: "文章"
+      index: '2',
+      path: '/articles',
+      name: '文章',
     },
     {
-      index: "3",
-      path: "/archive",
-      name: "归档"
+      index: '3',
+      path: '/archive',
+      name: '归档',
     },
     {
-      index: "4",
-      path: "/project",
-      name: "项目"
+      index: '4',
+      path: '/project',
+      name: '项目',
     },
     {
-      index: "5",
-      path: "/timeline",
-      name: "历程"
+      index: '5',
+      path: '/timeline',
+      name: '历程',
     },
     {
-      index: "6",
-      path: "/message",
-      name: "留言"
+      index: '6',
+      path: '/message',
+      name: '留言',
     },
     {
-      index: "7",
-      path: "/about",
-      name: "关于"
-    }
-  ];
-  private activeIndex: string = "0";
-  private enterSlideUp: boolean = false;
-  private leaveSlideDown: boolean = false;
-  private isShow: boolean = false;
-  private isMobile: boolean = isMobileOrPc();
+      index: '7',
+      path: '/about',
+      name: '关于',
+    },
+    {
+      index: '8',
+      path: '/practice',
+      name: '练手',
+    },
+  ]
+  private activeIndex: string = '0'
+  private enterSlideUp: boolean = false
+  private leaveSlideDown: boolean = false
+  private isShow: boolean = false
+  private isMobile: boolean = isMobileOrPc()
 
   mounted() {
     // 授权登录的，有 code 参数
-    this.routeChange(this.$route, this.$route);
-    const code: string = getQueryStringByName("code");
+    this.routeChange(this.$route, this.$route)
+    const code: string = getQueryStringByName('code')
     if (code) {
-      this.getUser(code);
+      this.getUser(code)
     }
   }
 
   get userInfo(): UserInfo {
     let userInfo: UserInfo = {
-      _id: "",
-      name: "",
-      avatar: ""
-    };
+      _id: '',
+      name: '',
+      avatar: '',
+    }
     if (window.sessionStorage.userInfo) {
-      userInfo = JSON.parse(window.sessionStorage.userInfo);
-      this.$store.commit("SAVE_USER", {
-        userInfo
-      });
+      userInfo = JSON.parse(window.sessionStorage.userInfo)
+      this.$store.commit('SAVE_USER', {
+        userInfo,
+      })
     }
     if (this.$store.state.user.userInfo) {
-      userInfo = this.$store.state.user.userInfo;
+      userInfo = this.$store.state.user.userInfo
     }
-    return userInfo;
+    return userInfo
   }
 
-  @Watch("$route")
+  @Watch('$route')
   routeChange(val: Route, oldVal: Route): void {
     for (let i = 0; i < this.list.length; i++) {
-      const l: NavListItem = this.list[i];
+      const l: NavListItem = this.list[i]
       if (l.path === val.path) {
-        this.activeIndex = i + 1 + "";
-        this.title = l.name;
-        break;
+        this.activeIndex = i + 1 + ''
+        this.title = l.name
+        break
       }
     }
   }
 
   private handleClickMenu(route: string): void {
-    this.isShow = false;
-    if (route === "/login") {
-      this.handleFlag = "login";
-      this.visible = true;
+    this.isShow = false
+    if (route === '/login') {
+      this.handleFlag = 'login'
+      this.visible = true
     }
-    if (route === "/register") {
-      this.handleFlag = "register";
-      this.visible = true;
+    if (route === '/register') {
+      this.handleFlag = 'register'
+      this.visible = true
     }
-    if (route === "/logout") {
-      this.handleLogout();
+    if (route === '/logout') {
+      this.handleLogout()
     }
   }
   private handleMenu(): void {
-    this.isShow = true;
-    this.enterSlideUp = true;
+    this.isShow = true
+    this.enterSlideUp = true
   }
   private handleHideMenu(): void {
-    this.enterSlideUp = false;
-    this.leaveSlideDown = true;
+    this.enterSlideUp = false
+    this.leaveSlideDown = true
     setTimeout(() => {
-      this.leaveSlideDown = false;
-      this.isShow = false;
-    }, 300);
+      this.leaveSlideDown = false
+      this.isShow = false
+    }, 300)
   }
 
   private async getUser(code: string): Promise<void> {
     const loading: any = this.$loading({
       lock: true,
-      text: "Loading",
-      spinner: "el-icon-loading",
-      background: "rgba(255, 255, 255, 0.7)"
-    });
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(255, 255, 255, 0.7)',
+    })
     const data: UserInfo = await this.$https.post(
       this.$urls.getUser,
       { code },
       { withCredentials: true }
-    );
-    loading.close();
+    )
+    loading.close()
 
     const userInfo: UserInfo = {
       _id: data._id,
       name: data.name,
-      avatar: data.avatar
-    };
-    this.$store.commit("SAVE_USER", {
-      userInfo
-    });
-    window.sessionStorage.userInfo = JSON.stringify(userInfo);
+      avatar: data.avatar,
+    }
+    this.$store.commit('SAVE_USER', {
+      userInfo,
+    })
+    window.sessionStorage.userInfo = JSON.stringify(userInfo)
     this.$message({
-      message: "操作成功",
-      type: "success"
-    });
-    let preventHistory = JSON.parse(window.sessionStorage.preventHistory);
+      message: '操作成功',
+      type: 'success',
+    })
+    let preventHistory = JSON.parse(window.sessionStorage.preventHistory)
     if (preventHistory) {
       this.$router.push({
         path: preventHistory.name,
-        query: preventHistory.query
-      });
+        query: preventHistory.query,
+      })
     }
   }
 
   private handleLogout(): void {
-    window.sessionStorage.userInfo = "";
-    this.$store.commit("SAVE_USER", {
+    window.sessionStorage.userInfo = ''
+    this.$store.commit('SAVE_USER', {
       userInfo: {
-        _id: "",
-        name: "",
-        avatar: ""
-      }
-    });
+        _id: '',
+        name: '',
+        avatar: '',
+      },
+    })
   }
 
   private handleClick(value: string): void {
-    this.handleFlag = value;
-    this.visible = true;
+    this.handleFlag = value
+    this.visible = true
   }
 
   private handleCancel(value: boolean): void {
-    this.visible = value;
+    this.visible = value
   }
   private handleOk(value: boolean): void {
-    this.visible = value;
+    this.visible = value
   }
   private handleSelect(val: string, oldVal: string): void {
     // console.log("val :", val);
     // console.log("oldVal :", oldVal);
-    this.activeIndex = val;
+    this.activeIndex = val
   }
 }
 </script>

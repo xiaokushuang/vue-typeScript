@@ -61,6 +61,12 @@ export default new Router({
       name: "articleDetail",
       component: () =>
         import(/* webpackChunkName: "articleDetail" */ "./views/articleDetail.vue")
+    },
+    {
+      path: "/practice",
+      name: "practice",
+      component: () =>
+        import(/* webpackChunkName: "practice" */ "./views/practiceParent.vue")
     }
     // {
     //   path: "*",

@@ -203,8 +203,6 @@ export interface TimelinesData {
   count: number;
   list: TimelineList | any;
 }
-
-
 // 标签
 export interface TagList {
   name: string;
@@ -213,4 +211,11 @@ export interface TagList {
 export interface TagsData {
   count: number;
   list: TagList | any;
+}
+
+//自己练手
+export interface PracticeList {
+  name: string;
+  age: number;
+  city: string;
 }
